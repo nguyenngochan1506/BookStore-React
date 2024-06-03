@@ -1,21 +1,29 @@
 import { useDispatch, useSelector } from "react-redux";
 import { SideBar } from "../../components";
-import { useState } from "react";
-import { createNotify, removeNotify } from "./../../features/notify/notifySlice";
+import { useEffect, useState } from "react";
+import {
+  createNotify,
+  removeNotify,
+} from "./../../features/notify/notifySlice";
 import dayjs from "dayjs";
+import { confirmOrder } from "../../features/order/orderSlice";
 
 const AdminHome = () => {
-  const listNotify = useSelector(state => state.notifyState)
+  const listNotify = useSelector((state) => state.notifyState);
+  const listOrder = useSelector((state) => state.orderState);
+
   const [notify, setNotify] = useState("");
   const dispatch = useDispatch();
 
   const handleSendNotify = () => {
-    if(notify){
-      dispatch(createNotify({notify}))
-    setNotify('');
+    if (notify) {
+      dispatch(createNotify({ notify }));
+      setNotify("");
     }
   };
-  const arr = [1, 2, 3, 4, 5];
+  const handleConfirmOrder = (id)=>{
+    dispatch(confirmOrder({orderId: id}))
+  }
 
   return (
     <>
@@ -101,16 +109,72 @@ const AdminHome = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {listNotify.slice().reverse().map((i, index) => {
+                    {listNotify
+                      .slice()
+                      .reverse()
+                      .map((i, index) => {
+                        return (
+                          <tr key={i.content}>
+                            <td>{index + 1}</td>
+                            <td>{i.content}</td>
+                            <td>
+                              {dayjs(i.createdDate)
+                                .format("DD/MM/YYYY HH:mm")
+                                .toString()}
+                            </td>
+                            <td>
+                              <button
+                                className="btn btn-error btn-sm"
+                                onClick={() =>
+                                  dispatch(removeNotify({ notify: i.content }))
+                                }
+                              >
+                                Xoá
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <h1 className="mt-8 text-2xl capitalize font-bold tracking-wider">
+              Đơn Hàng chờ xác nhận
+            </h1>
+            <div className="mt-8 shadow-lg">
+              <div className="overflow-x-auto">
+                <table className="table table-zebra">
+                  {/* <!-- head --> */}
+                  <thead>
+                    <tr>
+                      <th>Stt</th>
+                      <th>Mã Đơn Hàng</th>
+                      <th>Tên Người Nhận</th>
+                      <th>Ngày Đặt Hàng</th>
+                      <th>Trạng Thái</th>
+                      <th>Hành Động</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {listOrder.slice().reverse().map((i, index) => {
                       return (
-                        <tr key={i.content}>
+                        <tr key={i.id}>
                           <td>{index+1}</td>
-                          <td>{i.content}</td>
-                          <td>{dayjs(i.createdDate).format('DD/MM/YYYY HH:mm').toString()}</td>
+                          <td>{i.id}</td>
+                          <td>{i.shippingAddress}</td>
+                          <td>{i.createdDate}</td>
+                          <td>{i.state.name}</td>
                           <td>
-                            <button className="btn btn-warning btn-sm" onClick={()=>dispatch(removeNotify({notify: i.content}))}>
-                              Xoá
+                            {
+                              i.state.name != 'Đã Xác Nhận'
+                              ?<button className="btn btn-primary text-white btn-sm" onClick={()=>handleConfirmOrder(i.id)}>
+                              Xác Nhận
                             </button>
+                              :<button className="btn btn-success btn-sm" >
+                              Đã Xác Nhận
+                            </button>
+                            }
                           </td>
                         </tr>
                       );
@@ -121,8 +185,8 @@ const AdminHome = () => {
             </div>
             {/* <h1 className="mt-8 text-2xl capitalize font-bold tracking-wider">
               Đơn đặt hàng gần đây
-            </h1> */}
-            {/* <div className="mt-8 shadow-lg">
+            </h1>
+            <div className="mt-8 shadow-lg">
               <div className="overflow-x-auto">
                 <table className="table table-zebra"> */}
                   {/* <!-- head --> */}
@@ -130,7 +194,6 @@ const AdminHome = () => {
                     <tr>
                       <th>Stt</th>
                       <th>Mã Đơn Hàng</th>
-                      <th>Mã Người Nhận</th>
                       <th>Tên Người Nhận</th>
                       <th>Ngày Đặt Hàng</th>
                       <th>Trạng Thái</th>
@@ -138,15 +201,14 @@ const AdminHome = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {arr.map((i) => {
+                    {listOrder.map((i, index) => {
                       return (
-                        <tr key={i}>
-                          <td>01</td>
-                          <td>#0001</td>
-                          <td>#0001</td>
-                          <td>Nguyễn Ngọc Hân</td>
-                          <td>10/10/2001</td>
-                          <td>Đang Giao</td>
+                        <tr key={i.id + i.createdDate}>
+                          <td>{index+1}</td>
+                          <td>{i.id}</td>
+                          <td>{i.shippingAddress}</td>
+                          <td>{i.createdDate}</td>
+                          <td>{i.state.name}</td>
                           <td>
                             <button className="btn btn-warning btn-sm">
                               Chi Tiết
@@ -158,8 +220,8 @@ const AdminHome = () => {
                   </tbody>
                 </table>
               </div>
-            </div> */}
-          </div>
+            </div>*/}
+          </div> 
         </div>
         {/* <!-- end content --> */}
       </div>

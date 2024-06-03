@@ -1,6 +1,8 @@
 import { BsFillCartFill } from "react-icons/bs";
 import { useLoaderData } from "react-router-dom"
 import { dinhDangTien } from "../until";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 export const loader = () =>{
  return JSON.parse(localStorage.getItem('orderHistory'));
@@ -8,9 +10,9 @@ export const loader = () =>{
 
 
 const HistoryOrder = () => {
+  const user = useSelector(state=>state.userState.user)
     const listOrder = useLoaderData();
-
-
+  
   return (
     <div className="mb-8 mt-16 container mx-auto">
         <div className="text-2xl text-center">Lịch Sử Đơn Hàng</div>
@@ -30,7 +32,7 @@ const HistoryOrder = () => {
         <tbody>
           {/* row 1 */}
           {
-            listOrder.map(o=>{
+            listOrder.slice().reverse().filter(o=>o.id.includes(user.userName)).map(o=>{
                 return <tr key={o.id}>
                 <td>
                   <div className="flex items-center gap-3">
@@ -54,17 +56,6 @@ const HistoryOrder = () => {
             })
           }
         </tbody>
-        {/* foot */}
-        <tfoot>
-          <tr>
-            <th></th>
-            <th>Name</th>
-            <th>Job</th>
-            <th>Favorite Color</th>
-            <th></th>
-          </tr>
-        </tfoot>
-        
       </table>
     :<div className="text-center text-xl mt-16">Lịch Sử Trống</div>
     }

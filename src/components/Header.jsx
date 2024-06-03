@@ -177,9 +177,9 @@ const Header = () => {
               <hr />
               {user?.listRole?.includes("ADMIN") && (
                 <li>
-                  <Link to={"/admin"}>
+                  <a href={"/admin"}>
                     <strong>Quản Lý Bán Hàng</strong>
-                  </Link>
+                  </a>
                   <hr />
                 </li>
               )}

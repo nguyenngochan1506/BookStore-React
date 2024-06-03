@@ -20,6 +20,12 @@ class OrderState{
     handleComplete(){
         throw new Error('Thao tác không hợp lệ, vui lòng thử lại sau!!!')
     }
+    handleNotComplete(){
+        throw new Error('Thao tác không hợp lệ, vui lòng thử lại sau!!!')
+    }
+    handleReturn(){
+        throw new Error('Thao tác không hợp lệ, vui lòng thử lại sau!!!')
+    }
 }
 
 
@@ -51,6 +57,28 @@ export class Paid extends OrderState{
         }
     }
 }
+export class Return extends OrderState{
+    constructor() {
+        super('Đơn Hàng sẽ được hoàn trả!')
+    }
+    handleReturn(){
+        return {
+            newState: new Cancelled(),
+            message: 'Huỷ đơn hàng!'
+        }
+    }
+}
+export class NotComplete extends OrderState{
+    constructor() {
+        super('Giao Hàng Không Thành Công')
+    }
+    handleReturn(){
+        return {
+            newState: new Return(),
+            message: 'Đơn hàng sẽ được hoàn trả!'
+        }
+    }
+}
 export class Confirm extends OrderState{
     constructor() {
         super('Đã Xác Nhận')
@@ -70,6 +98,12 @@ export class Delivery extends OrderState{
         return {
             newState: new Complete(),
             message:'Đơn hàng đã được giao thành công!'
+        }
+    }
+    handleNotComplete(){
+        return {
+            newState: new NotComplete(),
+            message:'Giao Hàng Thất Bại!'
         }
     }
 }

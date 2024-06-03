@@ -70,7 +70,7 @@ const cartSlice = createSlice({
         createOrder: (state, action) => {
             const { userInfo } = action.payload;
             console.log(userInfo);
-            const order = new OrderModel({ id: userInfo.userName + state.cartTotal + state.listItems.length, shippingAddress: userInfo.address, userInfo })
+            const order = new OrderModel({ id: userInfo.userName + state.cartTotal + state.listItems.length+Math.floor(Math.random()*100000), shippingAddress: userInfo.address, userInfo })
             order.listOrderDetails = state.listItems.map(i => i);
             order.total = state.cartTotal;
             const message = order.pay();
