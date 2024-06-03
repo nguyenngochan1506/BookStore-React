@@ -19,7 +19,6 @@ import {
   Register,
 } from "./pages";
 
-import { loader as homeLoader } from "./pages/Home";
 import { loader as bookDetailLoader } from "./pages/BookDetail";
 import { loader as checkoutLoader } from "./pages/Checkout";
 import { loader as historyOrderLoader } from "./pages/HistoryOrder";
@@ -42,7 +41,6 @@ function App() {
         {
           index: true,
           element: <Home />,
-          loader: homeLoader
         },{
           element: <HistoryOrder/>,
           path:"/order-history",

@@ -1,17 +1,24 @@
 
+import { useEffect, useState } from "react";
 import { carouse, icon } from "../assets/img"
 import { ListBook } from "../components"
 import { getAllBook } from "../controller/BookController";
-import { useLoaderData } from "react-router-dom";
 
-export const loader = ()=>{
-    const listBook = getAllBook({viTriHienTai:0, soLuongLay:8})
-    return {listBook: listBook}
-}
+// export const loader = ({currentPage})=>{
+//     console.log(currentPage);
+//     const listBook = getAllBook({viTriHienTai:0, soLuongLay:8})
+//     return {listBook: listBook}
+// }
 
 const Home = () => {
-  const {listBook} = useLoaderData();
-  return (
+    const [numOfEle, setNumOfEle] = useState(8);
+    const [listBook, setListBook] = useState([])
+//   const {listBook} = useLoaderData({currentPage: 0});
+    useEffect(()=>{
+        const response = getAllBook({viTriHienTai:0, soLuongLay:numOfEle});
+        setListBook([...response])
+    },[numOfEle]);
+return (
     <>
         {/* carousel */}
         <div className="px-8">
@@ -96,7 +103,7 @@ const Home = () => {
         <div className="text-3xl capitalize font-bold p-8 pb-4"><i className="fa-solid fa-book-open"></i> sách bán chạy</div>
         <ListBook listBook={listBook}/>
         <div className="text-center">
-            <button className="btn btn-outline btn-error capitalize">Xem thêm</button>
+            <button className="btn btn-outline btn-error capitalize" onClick={()=>setNumOfEle(numOfEle+8)}>Xem thêm</button>
         </div>
     </div>
     {/* <!-- end best sale --> */}
