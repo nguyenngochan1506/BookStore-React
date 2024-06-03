@@ -1,10 +1,12 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { logoutUser, toggleTheme } from "../features/user/userSlice";
+import { logoutUser, subscribeNotify, toggleTheme } from "../features/user/userSlice";
 import CartModal from "./CartModal";
 import { useEffect, useState } from "react";
 import { searchBook } from "./../controller/BookController";
 import { useDebounce } from "../until";
+import { MdNotificationsNone } from "react-icons/md";
+import dayjs from "dayjs";
 
 const Header = () => {
   const [searchText, setSearchText] = useState("");
@@ -15,6 +17,8 @@ const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.userState.user);
+  const notifies = useSelector(state => state.notifyState);
+
 
   useEffect(() => {
     const request = async () => {
@@ -34,6 +38,9 @@ const Header = () => {
     dispatch(logoutUser());
   };
 
+  const handleSubscribeNotify = ()=>{
+    dispatch(subscribeNotify())
+  }
   return (
     <header className="navbar bg-base justify-between">
       <div className="flex">
@@ -65,15 +72,22 @@ const Header = () => {
         </label>
         {debounceSearch && (
           <ul className="absolute border top-12 z-10 bg-white w-full rounded-lg pb-4 shadow-lg max-h-[60vh] overflow-scroll">
-            {
-              loading
-              ?<div className="text-center"><span className="loading loading-dots loading-lg text-center"></span></div>
-              : resultSearch.length == 0 ? <div className="text-center">Không tìm thấy kết quả</div>
-              : resultSearch.map((s) => {
+            {loading ? (
+              <div className="text-center">
+                <span className="loading loading-dots loading-lg text-center"></span>
+              </div>
+            ) : resultSearch.length == 0 ? (
+              <div className="text-center">Không tìm thấy kết quả</div>
+            ) : (
+              resultSearch.map((s) => {
                 return (
                   <li key={s.id} className="mt-3 px-2 hover:bg-base-200">
                     <Link className="flex" to={`book/${s.id}`}>
-                      <img src={s.listImage[0]} alt="icon" className="size-14" />
+                      <img
+                        src={s.listImage[0]}
+                        alt="icon"
+                        className="size-14"
+                      />
                       <div>
                         <div className="line-clamp-1 text-md font-semibold">
                           {s.title}
@@ -91,7 +105,7 @@ const Header = () => {
                   </li>
                 );
               })
-            }
+            )}
           </ul>
         )}
       </div>
@@ -106,6 +120,28 @@ const Header = () => {
           <i className="fa-regular fa-moon text-2xl lg:text-3xl swap-on fill-current"></i>
           <i className="fa-regular fa-sun text-2xl lg:text-3xl swap-off fill-current"></i>
         </label>
+        <div className="dropdown dropdown-end ml-4">
+          <div tabIndex={0} role="button" className="btn btn-circle bg-inherit border-none m-1">
+          <MdNotificationsNone className="size-8" />
+          </div>
+          <ul
+            tabIndex={0}
+            className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-[45vw]"
+          >
+            {
+              user && !user.notify 
+              ?<li className="p-4">
+              <div className="btn btn-primary" onClick={handleSubscribeNotify}>
+                Đăng Ký Nhận Thông Báo
+              </div>
+            </li>
+              : notifies.slice().reverse().map((n, index) => <li className="text-center " key={index}>
+              <span className="line-clamp-1"><strong>{dayjs(n.createdDate).format('DD/MM/YYYY HH:mm').toString()} :</strong> {n.content}</span>
+            </li>)
+            }
+         
+          </ul>
+        </div>
 
         <CartModal />
         {!user && (
@@ -139,16 +175,14 @@ const Header = () => {
                 </a>
               </li>
               <hr />
-              {
-                user.listRole.includes('ADMIN') 
-                &&
+              {user?.listRole?.includes("ADMIN") && (
                 <li>
-                <Link to={'/admin'}>
-                  <strong>Quản Lý Bán Hàng</strong>
-                </Link>
-              <hr />
-              </li>
-              }
+                  <Link to={"/admin"}>
+                    <strong>Quản Lý Bán Hàng</strong>
+                  </Link>
+                  <hr />
+                </li>
+              )}
               <li>
                 <Link to={"/profile"} className="justify-between">
                   Profile

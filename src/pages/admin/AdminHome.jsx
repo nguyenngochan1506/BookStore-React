@@ -1,9 +1,11 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { SideBar } from "../../components";
 import { useState } from "react";
-import { createNotify } from "./../../features/notify/notifySlice";
+import { createNotify, removeNotify } from "./../../features/notify/notifySlice";
+import dayjs from "dayjs";
 
 const AdminHome = () => {
+  const listNotify = useSelector(state => state.notifyState)
   const [notify, setNotify] = useState("");
   const dispatch = useDispatch();
 
@@ -93,27 +95,21 @@ const AdminHome = () => {
                   <thead>
                     <tr>
                       <th>Stt</th>
-                      <th>Mã Đơn Hàng</th>
-                      <th>Mã Người Nhận</th>
-                      <th>Tên Người Nhận</th>
-                      <th>Ngày Đặt Hàng</th>
-                      <th>Trạng Thái</th>
+                      <th>Nội Dung</th>
+                      <th>Ngày Thông Báo</th>
                       <th>Hành Động</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {arr.map((i) => {
+                    {listNotify.slice().reverse().map((i, index) => {
                       return (
-                        <tr key={i}>
-                          <td>01</td>
-                          <td>#0001</td>
-                          <td>#0001</td>
-                          <td>Nguyễn Ngọc Hân</td>
-                          <td>10/10/2001</td>
-                          <td>Đang Giao</td>
+                        <tr key={i.content}>
+                          <td>{index+1}</td>
+                          <td>{i.content}</td>
+                          <td>{dayjs(i.createdDate).format('DD/MM/YYYY HH:mm').toString()}</td>
                           <td>
-                            <button className="btn btn-warning btn-sm">
-                              Chi Tiết
+                            <button className="btn btn-warning btn-sm" onClick={()=>dispatch(removeNotify({notify: i.content}))}>
+                              Xoá
                             </button>
                           </td>
                         </tr>
@@ -123,14 +119,14 @@ const AdminHome = () => {
                 </table>
               </div>
             </div>
-            <h1 className="mt-8 text-2xl capitalize font-bold tracking-wider">
+            {/* <h1 className="mt-8 text-2xl capitalize font-bold tracking-wider">
               Đơn đặt hàng gần đây
-            </h1>
-            <div className="mt-8 shadow-lg">
+            </h1> */}
+            {/* <div className="mt-8 shadow-lg">
               <div className="overflow-x-auto">
-                <table className="table table-zebra">
+                <table className="table table-zebra"> */}
                   {/* <!-- head --> */}
-                  <thead>
+                  {/* <thead>
                     <tr>
                       <th>Stt</th>
                       <th>Mã Đơn Hàng</th>
@@ -162,7 +158,7 @@ const AdminHome = () => {
                   </tbody>
                 </table>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
         {/* <!-- end content --> */}

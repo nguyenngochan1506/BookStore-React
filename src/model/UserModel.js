@@ -15,7 +15,7 @@ export default class UserModel{
         this.listAuthorFavorite = [];
         this.listOrder = [];
         this.listRole =  [];
-        this.listNotify = [];
+        this.notify = false;
     }
     updateNotify(notify){
         console.log(`${this.fullName} có 1 thông báo mới: ${notify.message}`);

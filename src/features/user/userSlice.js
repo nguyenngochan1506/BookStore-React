@@ -48,9 +48,13 @@ const userSlice = createSlice({
            document.documentElement.setAttribute('data-theme', state.theme)
            localStorage.setItem('theme', state.theme)
         },
+        subscribeNotify: (state)=>{
+            state.user.notify = true;
+            localStorage.setItem('user', JSON.stringify(state.user));
+        }
     }
 })
 
-export const {loginUser, logoutUser, toggleTheme, updateUserInfo, } = userSlice.actions;
+export const {loginUser, logoutUser, toggleTheme, updateUserInfo,subscribeNotify } = userSlice.actions;
 
 export default userSlice.reducer;
